@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "hack-interview"
+version = "0.1.0"
+description = ""
+authors = ["Andrey Ivanov <ivnv.xd@gmail.com>"]
+readme = "README.md"
+packages = [ { include = "src" } ]
+
+
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^1.26.2"
+openai = "^1.2.4"
+loguru = "^0.7.2"
+sounddevice = "^0.4.6"
+soundfile = "^0.12.1"
+pysimplegui = "^4.60.5"
+python-dotenv = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
