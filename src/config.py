@@ -1,0 +1,10 @@
+APPLICATION_WIDTH = 85
+THEME = "DarkGray12"
+
+OUTPUT_FILE_NAME = "record.wav"
+SAMPLE_RATE = 48000
+
+MODELS = ["gpt-3.5-turbo-1106", "gpt-4-1106-preview"]
+DEFAULT_MODEL = MODELS[0]
+
+DEFAULT_POSITION = "Python Developer"
