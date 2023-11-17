@@ -7,6 +7,10 @@ from src.config import APPLICATION_WIDTH, DEFAULT_MODEL, MODELS, THEME
 
 
 class BtnInfo:
+    """
+    A class to store the state of a button.
+    """
+
     def __init__(self, state: bool = False) -> None:
         self.state: bool = state
 
@@ -19,6 +23,20 @@ def create_button(
     subsample: int = 1,
     standard: bool = False,
 ) -> sg.Button:
+    """
+    Create a button element with the given parameters.
+
+    Args:
+        key (str): The key of the button.
+        tooltip (str): The tooltip of the button.
+        text (str, optional): The text of the button. Defaults to "".
+        image_data (str, optional): The image data of the button. Defaults to None.
+        subsample (int, optional): The subsample of the image. Defaults to 1.
+        standard (bool, optional): Whether to use the standard theme. Defaults to False.
+
+    Returns:
+        sg.Button: The button element.
+    """
     if not standard:
         theme_bg_color: str = sg.theme_background_color()
         color = (theme_bg_color, theme_bg_color)
@@ -44,6 +62,18 @@ def create_text_area(
     key: str = "",
     text_color: str = None,
 ) -> sg.Text:
+    """
+    Create a text area element with the given parameters.
+
+    Args:
+        text (str, optional): The text of the text area. Defaults to "".
+        size (Optional[Tuple[int, int]], optional): The size of the text area. Defaults to None.
+        key (str, optional): The key of the text area. Defaults to "".
+        text_color (str, optional): The color of the text. Defaults to None.
+
+    Returns:
+        sg.Text: The text area element.
+    """
     return sg.Text(
         text=text,
         size=size,
@@ -55,7 +85,16 @@ def create_text_area(
     )
 
 
-def name(name: str):
+def name(name: str) -> sg.Text:
+    """
+    Create a text element with spaces to the right.
+
+    Args:
+        name (str): The name of the text element.
+
+    Returns:
+        sg.Text: The text element.
+    """
     spaces: int = 15 - len(name) - 2
     return sg.Text(
         name + " " * spaces,
@@ -63,8 +102,23 @@ def name(name: str):
 
 
 def create_frame(
-    layout=[[]], title: str = "", key: str = "", border: int = 0
+    layout: List[List[Union[sg.Element, sg.Element]]] = [[]],
+    title: str = "",
+    key: str = "",
+    border: int = 0,
 ) -> sg.Frame:
+    """
+    Create a frame element with the given parameters.
+
+    Args:
+        layout (List[List[Union[sg.Element, sg.ContainerElement]]], optional): The layout of the frame. Defaults to [[]].
+        title (str, optional): The title of the frame. Defaults to "".
+        key (str, optional): The key of the frame. Defaults to "".
+        border (int, optional): The border width of the frame. Defaults to 0.
+
+    Returns:
+        sg.Frame: The frame element.
+    """
     return sg.Frame(
         title=title,
         layout=layout,
@@ -75,7 +129,19 @@ def create_frame(
     )
 
 
-def create_column(layout, key: str = "") -> sg.Column:
+def create_column(
+    layout: List[List[Union[sg.Element, sg.Element]]] = [[]], key: str = ""
+) -> sg.Column:
+    """
+    Create a column element with the given parameters.
+
+    Args:
+        layout (List[List[Union[sg.Element, sg.ContainerElement]]], optional): The layout of the column. Defaults to [[]].
+        key (str, optional): The key of the column. Defaults to "".
+
+    Returns:
+        sg.Column: The column element.
+    """
     return sg.Column(
         layout=layout,
         key=key,
@@ -87,6 +153,12 @@ def create_column(layout, key: str = "") -> sg.Column:
 def build_layout() -> (
     List[List[Union[sg.Text, sg.Button, sg.Frame, sg.Combo, sg.Input]]]
 ):
+    """
+    Build the layout of the application.
+
+    Returns:
+        List[List[Union[sg.Text, sg.Button, sg.Frame, sg.Combo, sg.Input]]]: The layout of the application.
+    """
     # Create elements
     record_button: sg.Button = create_button(
         image_data=OFF_IMAGE,
@@ -205,7 +277,14 @@ def build_layout() -> (
 
 
 def initialize_window() -> sg.Window:
+    """
+    Initialize the application window.
+
+    Returns:
+        sg.Window: The application window.
+    """
     sg.theme(THEME)
+
     layout: List[
         List[Union[sg.Text, sg.Button, sg.Frame, sg.Combo, sg.Input]]
     ] = build_layout()

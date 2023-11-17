@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional
 
 import numpy as np
+import PySimpleGUI as sg
 import sounddevice as sd
 import soundfile as sf
 from loguru import logger
@@ -9,6 +10,12 @@ from src.config import OUTPUT_FILE_NAME, SAMPLE_RATE
 
 
 def find_blackhole_device_id() -> Optional[int]:
+    """
+    Find the BlackHole device ID in the list of devices.
+
+    Returns:
+        Optional[int]: The BlackHole device ID if found, None otherwise.
+    """
     devices: List[Dict[str, Any]] = sd.query_devices()
     for device_id, device in enumerate(devices):
         if "BlackHole" in device["name"]:
@@ -17,7 +24,14 @@ def find_blackhole_device_id() -> Optional[int]:
     return None
 
 
-def record(button: Any) -> None:
+def record(button: sg.Element) -> None:
+    """
+    Record audio from the BlackHole device while the record button is active.
+    Save the audio to a file.
+
+    Args:
+        button (sg.Element): The record button element.
+    """
     logger.debug("Recording...")
     frames: List[np.ndarray] = []
 
@@ -49,6 +63,13 @@ def record(button: Any) -> None:
 def save_audio_file(
     audio_data: np.ndarray, output_file_name: str = OUTPUT_FILE_NAME
 ) -> None:
+    """
+    Save the audio data to a file.
+
+    Args:
+        audio_data (np.ndarray): The audio data.
+        output_file_name (str, optional): The output file name. Defaults to OUTPUT_FILE_NAME.
+    """
     sf.write(
         file=output_file_name,
         data=audio_data,
