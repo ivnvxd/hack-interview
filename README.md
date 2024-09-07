@@ -54,7 +54,13 @@ Hack Interview application is a tool designed to assist in job interviews using 
 
 Contributions are very welcome. Please submit a pull request or create an issue.
 
-:star: Do not forget to give the project a star if you like it! :star:
+## Support
+
+Thank you for using this project! If you find it helpful and would like to support my work, kindly consider buying me a coffee. Your support is greatly appreciated!
+
+<a href="https://www.buymeacoffee.com/ivnvxd" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+And do not forget to give the project a star if you like it! :star:
 
 ## Acknowledgments
 
