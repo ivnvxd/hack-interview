@@ -14,8 +14,8 @@ openai = "^1.2.4"
 loguru = "^0.7.2"
 sounddevice = "^0.4.6"
 soundfile = "^0.12.1"
-pysimplegui = "^4.60.5"
 python-dotenv = "^1.0.0"
+freesimplegui = "^5.2.0.post1"
 
 
 [build-system]

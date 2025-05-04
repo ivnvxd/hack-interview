@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 from loguru import logger
 
 from src import audio, gpt_query

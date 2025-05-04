@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional
 
 import numpy as np
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 import sounddevice as sd
 import soundfile as sf
 from loguru import logger

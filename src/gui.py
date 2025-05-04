@@ -1,6 +1,6 @@
 from typing import List, Optional, Tuple, Union
 
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 
 from src.button import GREY_BUTTON, OFF_IMAGE
 from src.config import APPLICATION_WIDTH, DEFAULT_MODEL, MODELS, THEME
