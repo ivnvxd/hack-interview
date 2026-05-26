@@ -10,6 +10,7 @@ packages = [ { include = "src" } ]
 [tool.poetry.dependencies]
 python = "^3.10"
 numpy = "^1.26.2"
+groq = "^0.30.0"
 openai = "^1.2.4"
 loguru = "^0.7.2"
 sounddevice = "^0.4.6"

@@ -1,16 +1,16 @@
-import os
-from functools import lru_cache
+from pathlib import Path
+from typing import Any
 
+from dotenv import load_dotenv
 from loguru import logger
-from openai import OpenAI
 
 from src.config import (
     DEFAULT_MODEL,
     DEFAULT_POSITION,
-    GROQ_BASE_URL,
+    GROQ_WHISPER_MODEL,
     LLM_PROVIDER,
+    OPENAI_WHISPER_MODEL,
     OUTPUT_FILE_NAME,
-    TRANSCRIPTION_MODEL,
 )
 
 SYS_PREFIX: str = "You are interviewing for a "
@@ -21,50 +21,61 @@ You will receive an audio transcription of the question. It may not be complete.
 SHORT_INSTRUCTION: str = "Concisely respond, limiting your answer to 50 words."
 LONG_INSTRUCTION: str = "Before answering, take a deep breath and think one step at a time. Believe the answer in no more than 150 words."
 
+load_dotenv()
 
-def _get_required_env(name: str) -> str:
-    value = os.getenv(name, "").strip()
-    if not value:
-        raise RuntimeError(
-            f"{name} is not set. Add it to your .env file or set it in your PowerShell session."
-        )
-    return value
+_client: Any = None
 
 
-@lru_cache(maxsize=1)
-def get_client() -> OpenAI:
-    if LLM_PROVIDER == "groq":
-        return OpenAI(
-            api_key=_get_required_env("GROQ_API_KEY"),
-            base_url=GROQ_BASE_URL,
-        )
+def _get_client() -> Any:
+    global _client
+    if _client is None:
+        if LLM_PROVIDER == "groq":
+            from groq import Groq
 
-    return OpenAI(api_key=_get_required_env("OPENAI_API_KEY"))
+            _client = Groq()
+        else:
+            from openai import OpenAI
+
+            _client = OpenAI()
+    return _client
 
 
 def transcribe_audio(path_to_file: str = OUTPUT_FILE_NAME) -> str:
     """
-    Transcribe audio from a file using the configured provider.
+    Transcribe audio using Groq or OpenAI Whisper API.
 
     Args:
         path_to_file (str, optional): Path to the audio file. Defaults to OUTPUT_FILE_NAME.
 
     Returns:
-        str: The audio transcription.
+        str: The audio transcription or an error message.
     """
-    logger.debug(f"Transcribing audio from: {path_to_file}...")
-    client = get_client()
+    whisper_model = (
+        GROQ_WHISPER_MODEL if LLM_PROVIDER == "groq" else OPENAI_WHISPER_MODEL
+    )
+    logger.debug(
+        f"Transcribing audio ({LLM_PROVIDER}, {whisper_model}) from: {path_to_file}..."
+    )
 
-    with open(path_to_file, "rb") as audio_file:
-        try:
-            transcript: str = client.audio.transcriptions.create(
-                model=TRANSCRIPTION_MODEL,
+    if not Path(path_to_file).is_file():
+        message = (
+            "No recording found. Press R to start recording, speak your question, "
+            "press R again to stop, then press A to transcribe."
+        )
+        logger.error(message)
+        return message
+
+    try:
+        with open(path_to_file, "rb") as audio_file:
+            transcript: str = _get_client().audio.transcriptions.create(
+                model=whisper_model,
                 file=audio_file,
                 response_format="text",
             )
-        except Exception as error:
-            logger.error(f"Can't transcribe audio: {error}")
-            raise error
+    except Exception as error:
+        message = f"Transcription failed: {error}"
+        logger.error(message)
+        return message
 
     logger.debug("Audio transcribed.")
     print("Transcription:", transcript)
@@ -80,7 +91,7 @@ def generate_answer(
     position: str = DEFAULT_POSITION,
 ) -> str:
     """
-    Generate an answer to the question using the configured provider.
+    Generate an answer using Groq or OpenAI chat completions.
 
     Args:
         transcript (str): The audio transcription.
@@ -90,19 +101,16 @@ def generate_answer(
         position (str, optional): The position to use. Defaults to DEFAULT_POSITION.
 
     Returns:
-        str: The generated answer.
+        str: The generated answer or an error message.
     """
-    # Generate system prompt
-    client = get_client()
     system_prompt: str = SYS_PREFIX + position + SYS_SUFFIX
     if short_answer:
         system_prompt += SHORT_INSTRUCTION
     else:
         system_prompt += LONG_INSTRUCTION
 
-    # Generate answer
     try:
-        response = client.chat.completions.create(
+        response = _get_client().chat.completions.create(
             model=model,
             temperature=temperature,
             messages=[
@@ -111,7 +119,8 @@ def generate_answer(
             ],
         )
     except Exception as error:
-        logger.error(f"Can't generate answer: {error}")
-        raise error
+        message = f"Answer generation failed: {error}"
+        logger.error(message)
+        return message
 
     return response.choices[0].message.content
